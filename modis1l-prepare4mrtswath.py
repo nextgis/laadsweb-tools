@@ -12,6 +12,15 @@ import os
 import shutil
 import sys
 
+
+#------------SET THESE BEFORE RUNNING-----------------
+swath2grid_path = '/home/sim/MRTSwath/bin/' #'c:/tools/MRTSwath/bin/'
+swath2grid_name = 'swath2grid' #swath2grid.exe 
+os.environ['MRTSWATH_DATA_DIR'] = '/home/sim/MRTSwath/data' #'c:/tools/MRTSwath/data/'
+gdal_calc_name = 'gdal_calc.py' #'gdal_calc.bat'
+gdal_merge_name = 'gdal_merge.py' #'gdal_merge'
+#-----------------------------------------------------
+
 def create_prm():
     prm = open('temp.prm','wb')
     prm.write('INPUT_FILENAME = ' + wd + f_in + '\n')                                              #D:\MOD02QKM.A2007204.0805.005.2007205121542.hdf
@@ -31,8 +40,6 @@ def create_prm():
 
 if __name__ == '__main__':
     #parameters start
-    swath2grid_path = 'c:/tools/MRTSwath/bin/'
-    os.environ['MRTSWATH_DATA_DIR'] = 'c:/tools/MRTSwath/data/'
     dataset_name = 'EV_250_RefSB'
     numbands = 2
     dataset_bands = '1, 1'
@@ -56,7 +63,8 @@ if __name__ == '__main__':
         f_in_03 = glob.glob(product_geoloc_type + '.' + datetime + '*.hdf')[0]
         
         create_prm()
-        cmd = swath2grid_path + 'swath2grid.exe -pf=temp.prm'
+        cmd = swath2grid_path + swath2grid_name + ' -pf=temp.prm'
+        print(cmd)
         os.system(cmd)
         
         #merge in stack
@@ -65,11 +73,11 @@ if __name__ == '__main__':
         bands_list = bands_list.strip(',')
         
         for i in range(numbands):
-            cmd = 'gdal_calc.bat -A ' + f_out + '_' + dataset_name + '_b' + str(i) + '.tif' + ' --outfile=' + f_out + '_' + dataset_name + '_b' + str(i) + '_calc.tif' + ' --calc="A*(A<16000)" --NoDataValue=0'
+            cmd = gdal_calc_name + ' -A ' + f_out + '_' + dataset_name + '_b' + str(i) + '.tif' + ' --outfile=' + f_out + '_' + dataset_name + '_b' + str(i) + '_calc.tif' + ' --calc="A*(A<16000)" --NoDataValue=0'
             os.system(cmd)
             shutil.move(f_out + '_' + dataset_name + '_b' + str(i) + '_calc.tif', f_out + '_' + dataset_name + '_b' + str(i) + '.tif')
         
-        cmd = 'gdal_merge -separate -ps ' + str(res) + ' ' + str(res) + ' -o ' + od + datetime + '.tif' + bands_list
+        cmd = gdal_merge_name + ' -separate -ps ' + str(res) + ' ' + str(res) + ' -o ' + od + datetime + '.tif' + bands_list
         os.system(cmd)
         
         for i in range(numbands): os.remove(f_out + '_' + dataset_name + '_b' + str(i) + '.tif')
