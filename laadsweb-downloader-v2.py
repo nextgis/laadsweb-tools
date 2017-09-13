@@ -9,6 +9,9 @@
 # Usage example: python laadsweb-downloader-v2.py LAADS_query.2017-08-03T08_39.csv /home/sim/work/laadsweb-tools/ /home/sim/work/laadsweb-tools/hdf/
 # -----------------------------------------------------------------------------------------------------------------------------------------------
 
+
+#Get CSV here https://ladsweb.modaps.eosdis.nasa.gov/search/imageViewer/42/MOD02QKM--6,MOD03--6/2017-07-01..2017-08-03/D/44.1,47.3,47.6,44.4/2725035273
+
 import sys
 import urllib2
 import csv
@@ -96,7 +99,8 @@ if __name__ == '__main__':
         down_list = [s for s in hrefs if datetime in s]
         
         for down_link in down_list:
-            status = get_file(down_link,down_link.split('/')[-1])
+            if not os.path.exists(results_dir + down_link.split('/')[-1]):
+                status = get_file(down_link,down_link.split('/')[-1])
             pbar.update(pbar.currval+1)
     pbar.finish()
     f_errors.close()

@@ -109,7 +109,7 @@ def download_preview(url,fn):
     
 if __name__ == '__main__':
     #Create array of links to previews
-    images = get_images('MOD02QKM', 6, '2017-07-01', '2017-08-03', (44.1, 47.3, 47.6, 44.4), 'true')
+    images = get_images('MOD02QKM', 6, '2017-08-02', '2017-09-13', (44.1, 47.3, 47.6, 44.4), 'true')
 
     
     pbar = ProgressBar(widgets=[Bar('=', '[', ']'), ' ', Counter(), " of " + str(len(images)), ' ', ETA()]).start()
